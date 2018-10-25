@@ -563,7 +563,7 @@ db_doc_req(#httpd{method = 'GET', mochi_req = MochiReq} = Req, Db, DocId) ->
 db_doc_req(#httpd{method='POST'}=Req, Db, DocId) ->
     couch_httpd:validate_referer(Req),
     DbName = couch_db:name(Db),
-    couch_doc:validate_docid(DocId, DbName),
+    couch_db:validate_docid(Db, DocId),
     couch_httpd:validate_ctype(Req, "multipart/form-data"),
     Form = couch_httpd:parse_form(Req),
     case couch_util:get_value("_doc", Form) of
@@ -598,7 +598,7 @@ db_doc_req(#httpd{method='POST'}=Req, Db, DocId) ->
 
 db_doc_req(#httpd{method='PUT'}=Req, Db, DocId) ->
     DbName = couch_db:name(Db),
-    couch_doc:validate_docid(DocId, DbName),
+    couch_db:validate_docid(Db, DocId),
 
     case couch_util:to_list(couch_httpd:header_value(Req, "Content-Type")) of
     ("multipart/related;" ++ _) = ContentType ->
@@ -1039,7 +1039,7 @@ db_attachment_req(#httpd{method=Method,mochi_req=MochiReq}=Req, Db, DocId, FileN
                 % check for the existence of the doc to handle the 404 case.
                 couch_doc_open(Db, DocId, nil, [])
             end,
-            couch_doc:validate_docid(DocId, couch_db:name(Db)),
+            couch_db:validate_docid(Db, DocId),
             #doc{id=DocId};
         Rev ->
             case couch_db:open_doc_revs(Db, DocId, [Rev], []) of

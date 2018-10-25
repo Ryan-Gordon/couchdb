@@ -221,6 +221,9 @@ init([]) ->
     % Mark pluggable storage engines as a supported feature
     config:enable_feature('pluggable-storage-engines'),
 
+    % Mark partitioned databases as a supported feature
+    config:enable_feature(partitions),
+
     % read config and register for configuration changes
 
     % just stop if one of the config settings change. couch_server_sup
